@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>perception</name>
+    <version>0.01</version>
+    <description>Meta-package for the perception library.</description>
+    <maintainer email="tanzby@outlook.com">iceytan</maintainer>
+    <license>BSD</license>
+    <author email="tanzby@outlook.com">iceytan</author>
+    <buildtool_depend>catkin</buildtool_depend>
+    <exec_depend>lidar_object_detector</exec_depend>
+    <exec_depend>points_preprocess</exec_depend>
+    <exec_depend>point_cloud_fusion</exec_depend>
+    <export>
+        <metapackage />
+    </export>
+</package>

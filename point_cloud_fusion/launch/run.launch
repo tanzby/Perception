@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="point_cloud_fusion" type="point_cloud_fusion_node" name="point_cloud_fusion_node" output="screen">
+        <rosparam file="$(find point_cloud_fusion)/param/fusion.yaml" command="load"/>
+    </node>
+</launch>

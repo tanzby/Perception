@@ -1,0 +1,35 @@
+<launch>
+    <node pkg="points_preprocess" type="points_preprocess_node" name="points_preprocess_node" output="screen">
+        <remap from="/in_cloud" to="/concat_rslidar_points"/>
+        <remap from="/out_cloud" to="/filtered_rslidar_points"/>
+
+        <param name="use_ground_removal" value="true"/>
+        <param name="use_rules_base_filter" value="true"/>
+        <param name="use_map_roi_filter" value="true"/>
+
+        <!-- for ground_removal -->
+        <param name="radial_divider_angle" value="0.5"/>
+        <param name="concentric_divider_distance" value="0.0"/>
+        <param name="local_max_slope" value="30.0"/>
+        <param name="general_max_slope" value="30.0"/>
+        <param name="min_height_threshold" value="0.3"/>
+        <param name="reclass_distance_threshold" value="0.5"/>
+
+        <!-- for rules_base_filter -->
+        <param name="in_max_x_range" value="3.5"/>
+        <param name="in_min_x_range" value="-1.2"/>
+        <param name="in_max_y_range" value="1.5"/>
+        <param name="in_min_y_range" value="-1.5"/>
+        <param name="out_max_x_range" value="100"/>
+        <param name="out_min_x_range" value="-20"/>
+        <param name="out_max_y_range" value="10"/>
+        <param name="out_min_y_range" value="-10"/>
+        <param name="clip_height" value="2.5"/>
+
+        <!-- for map_roi_filter -->
+        <param name="range" value="100"/>
+        <param name="extend_dist" value="2.0"/>
+        <param name="cell_size" value="0.4"/>
+
+    </node>
+</launch>

@@ -1,0 +1,14 @@
+<launch>
+    <node pkg="lidar_object_detector" type="lidar_object_detector_node" name="lidar_object_detector_node">
+        <param name="cluster_min_dist" value="0.0"/>
+        <param name="cluster_tolerance" value="0.5"/>
+        <param name="cluster_min_pts" value="4"/>
+        <param name="cluster_max_pts" value="500"/>
+        <param name="cluster_min_size_x" value="0.2"/>
+        <param name="cluster_min_size_y" value="0.2"/>
+        <param name="cluster_min_size_z" value="0.6"/>
+        <param name="cluster_max_size_x" value="6.0"/>
+        <param name="cluster_max_size_y" value="4.0"/>
+        <param name="cluster_max_size_z" value="3.0"/>
+    </node>
+</launch>
