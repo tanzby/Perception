@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
     <name>perception</name>
-    <version>0.01</version>
+    <version>0.0.1</version>
     <description>Meta-package for the perception library.</description>
     <maintainer email="tanzby@outlook.com">iceytan</maintainer>
     <license>BSD</license>
