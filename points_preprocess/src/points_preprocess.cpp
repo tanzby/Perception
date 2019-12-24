@@ -75,15 +75,19 @@ namespace points_preprocess
             Eigen::Quaterniond r(quad.w(),quad.x(),quad.y(),quad.z());
             Eigen::Matrix2d rot = r.toRotationMatrix().topLeftCorner(2,2);
 
-            auto& world_polygon = latest_map_roi_concave_.polygon.points;
+            std::vector<MapROIFilter::Polygon>  boundary_polygons(latest_map_roi_concave_.polygons.size());
 
-            std::vector<MapROIFilter::Polygon>  boundary_polygons(1, MapROIFilter::Polygon(world_polygon.size()));
-
-            for (int i = 0; i < world_polygon.size(); ++i)
+            for (size_t p = 0; p < latest_map_roi_concave_.polygons.size(); ++p)
             {
-                boundary_polygons[0][i].x() =  world_polygon[i].x - tx;
-                boundary_polygons[0][i].y() =  world_polygon[i].y - ty;
-                boundary_polygons[0][i] = rot.transpose()*boundary_polygons[0][i];
+                auto len = latest_map_roi_concave_.polygons[p].points.size();
+                boundary_polygons[p].resize(len);
+                for(size_t i = 0; i < len; ++i)
+                {
+                    const auto& world_polygon_p = latest_map_roi_concave_.polygons[p].points[i];
+                    boundary_polygons[p][i].x() = world_polygon_p.x - tx;
+                    boundary_polygons[p][i].y() = world_polygon_p.y - ty;
+                    boundary_polygons[p][i] = rot.transpose()*boundary_polygons[0][i];
+                }
             }
 
             map_roi_filter_->set_boundary(boundary_polygons);
@@ -95,7 +99,7 @@ namespace points_preprocess
         }
     }
 
-    void PointsPreProcessor::map_roi_callback(const geometry_msgs::PolygonStamped::ConstPtr &msg)
+    void PointsPreProcessor::map_roi_callback(const hdmap_msgs::PolygonArrayStamped::ConstPtr &msg)
     {
         latest_map_roi_concave_ = *msg;
     }

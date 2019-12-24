@@ -11,5 +11,5 @@
     <depend>sensor_msgs</depend>
     <depend>tf</depend>
     <depend>pcl_ros</depend>
-    <depend>geometry_msgs</depend>
+    <depend>hdmap_msgs</depend>
 </package>

@@ -5,7 +5,7 @@
 #include <pcl_ros/publisher.h>
 #include <pcl_ros/point_cloud.h>
 #include <pcl_conversions/pcl_conversions.h>
-#include <geometry_msgs/PolygonStamped.h>
+#include <hdmap_msgs/PolygonArrayStamped.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <utility>
 
@@ -23,12 +23,12 @@ namespace points_preprocess
         void cloud_callback(const PointCloudT::ConstPtr &msg);
 
         void construct_local_boundary();
-        void map_roi_callback(const geometry_msgs::PolygonStamped::ConstPtr &msg);
+        void map_roi_callback(const hdmap_msgs::PolygonArrayStamped::ConstPtr &msg);
 
         std::unique_ptr<RulesBasedFilter> rules_based_filter_;
         std::unique_ptr<GroundRemoval> ground_removal_;
         std::unique_ptr<MapROIFilter>  map_roi_filter_;
-        geometry_msgs::PolygonStamped  latest_map_roi_concave_;
+        hdmap_msgs::PolygonArrayStamped  latest_map_roi_concave_;
 
         tf::TransformListener tf_listener_;
         ros::NodeHandle node_handle_, private_node_handle_;

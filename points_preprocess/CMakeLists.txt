@@ -5,14 +5,14 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "")
 
 find_package(catkin REQUIRED COMPONENTS
-    message_filters sensor_msgs tf pcl_ros geometry_msgs)
+    message_filters sensor_msgs tf pcl_ros hdmap_msgs)
 
 find_package(PCL REQUIRED COMPONENTS filters)
 
 catkin_package(
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
-    CATKIN_DEPENDS message_filters sensor_msgs tf pcl_ros geometry_msgs
+    CATKIN_DEPENDS message_filters sensor_msgs tf pcl_ros hdmap_msgs
 )
 
 include_directories(

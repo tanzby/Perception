@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <limits>
 #include <vector>
+#include <glog/logging.h>
 
 #include <Eigen/StdVector>
 
@@ -39,8 +40,8 @@ namespace points_preprocess {
             poly_max_p.x() = std::max(pt.x(), poly_max_p.x());
             poly_max_p.y() = std::max(pt.y(), poly_max_p.y());
         }
-        assert(poly_max_p.x()>poly_min_p.x());
-        assert(poly_max_p.y()>poly_min_p.y());
+        CHECK_GT(poly_max_p.x(), poly_min_p.x()) << " with " << polygon.size() <<" points";
+        CHECK_GT(poly_max_p.y(), poly_min_p.y()) << " with " << polygon.size() <<" points";;
 
         const Eigen::Vector2d& bitmap_min_range = bitmap->min_range();
         const Eigen::Vector2d& bitmap_max_range = bitmap->max_range();
