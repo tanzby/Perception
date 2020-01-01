@@ -21,14 +21,20 @@ include_directories(
     ${PCL_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}
+add_executable(lidar_object_detector_node
+    src/lidar_object_detector.cpp
+    src/lidar_object_detector_node.cpp
     src/cluster_detector.cpp
     src/box_shape_estimation.cpp)
 
-target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES})
+add_executable(lidar_object_tracker_node
+    src/lidar_object_tracker_node.cpp
+    src/imm_ukf_pda.cpp
+    src/ukf.cpp)
 
-add_executable(${PROJECT_NAME}_node
-    src/lidar_object_detector.cpp
-    src/lidar_object_detector_node.cpp)
+add_executable(lidar_object_converter_node
+    src/convertor.cpp)
 
-target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} ${PROJECT_NAME})
+target_link_libraries(lidar_object_detector_node ${catkin_LIBRARIES} )
+target_link_libraries(lidar_object_tracker_node  ${catkin_LIBRARIES} )
+target_link_libraries(lidar_object_converter_node  ${catkin_LIBRARIES})

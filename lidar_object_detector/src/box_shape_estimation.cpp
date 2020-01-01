@@ -5,7 +5,7 @@ namespace lidar_object_detector
 {
     BoxShapeEstimator::BoxShapeEstimator(){}
 
-    bool BoxShapeEstimator::estimate(const Cluster::Ptr& cluster, Box& box)
+    bool BoxShapeEstimator::estimate(const Cluster::Ptr& cluster, perception_msgs::DetectedObject& box)
     {
 
         // calc min and max z for cylinder length
@@ -100,22 +100,22 @@ namespace lidar_object_detector
         diagonal_vec << intersection_x_1 - intersection_x_2, intersection_y_1 - intersection_y_2;
 
         // calc yaw
-        box.heading = std::atan2(e_1_star.y(), e_1_star.x());
+        box.pose.orientation = getOrientFromYaw(std::atan2(e_1_star.y(), e_1_star.x()));
 
-        box.x = (intersection_x_1 + intersection_x_2) / 2.0;
-        box.y = (intersection_y_1 + intersection_y_2) / 2.0;
-        box.z = cluster->centroid.z();
+        box.pose.position.x = (intersection_x_1 + intersection_x_2) / 2.0;
+        box.pose.position.y = (intersection_y_1 + intersection_y_2) / 2.0;
+        box.pose.position.z = cluster->centroid.z();
         
         constexpr double ep = 0.001;
-        box.dx = std::fabs(e_x.dot(diagonal_vec));
-        box.dy = std::fabs(e_y.dot(diagonal_vec));
-        box.dz = std::max((max_z - min_z), ep);
+        box.dimensions.x = std::fabs(e_x.dot(diagonal_vec));
+        box.dimensions.y = std::fabs(e_y.dot(diagonal_vec));
+        box.dimensions.z = std::max((max_z - min_z), ep);
 
         // check wrong output
-        if (box.dx < ep && box.dy < ep)
+        if (box.dimensions.x < ep && box.dimensions.y < ep)
             return false;
-        box.dx = std::max(box.dx, ep);
-        box.dy = std::max(box.dy, ep);
+        box.dimensions.x = std::max(box.dimensions.x, ep);
+        box.dimensions.y = std::max(box.dimensions.y, ep);
         return true;
     }
 

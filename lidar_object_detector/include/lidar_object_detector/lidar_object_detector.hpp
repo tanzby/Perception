@@ -11,7 +11,6 @@ namespace lidar_object_detector
     {
         void init();
         void cloud_callback(const PointCloudT::ConstPtr &msg);
-        void send_clusters(const std::vector<Cluster::Ptr>& cluster, const std_msgs::Header& header);
 
         std::unique_ptr<ClusterDetector>   cluster_detector_;
         std::unique_ptr<BoxShapeEstimator> box_estimator_;

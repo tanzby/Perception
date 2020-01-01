@@ -11,4 +11,23 @@
         <param name="cluster_max_size_y" value="4.0"/>
         <param name="cluster_max_size_z" value="3.0"/>
     </node>
+
+    <node pkg="lidar_object_detector" type="lidar_object_tracker_node" name="lidar_object_tracker_node">
+        <param name="tracking_frame_" value="map" />
+        <param name="life_time_threshold" value="8" />
+        <param name="gating_threshold" value="9.22" />
+        <param name="gate_probability" value="0.99" />
+        <param name="detection_probability" value="0.9" />
+        <param name="static_velocity_threshold_" value="0.5" />
+        <param name="static_num_history_threshold" value="3" />
+        <param name="prevent_explosion_threshold" value="1000" />
+        <param name="merge_distance_threshold" value="1000" />
+        <param name="prevent_explosion_threshold" value="0.5" />
+        <param name="use_sukf" value="false"/>
+    </node>
+
+    <node pkg="lidar_object_detector" type="lidar_object_converter_node" name="lidar_object_converter_node">
+        <remap from="/detected_objects" to="/detected_objects"/>
+    </node>
+
 </launch>

@@ -1,6 +1,5 @@
 #include "lidar_object_detector/lidar_object_detector.hpp"
 #include "lidar_object_detector/visualize_utils.hpp"
-#include "perception_msgs/ObjectArray.h"
 
 #include <jsk_recognition_msgs/PolygonArray.h>
 #include <jsk_recognition_msgs/BoundingBoxArray.h>
@@ -18,9 +17,7 @@ namespace lidar_object_detector
                 &LidarObjectDetector::cloud_callback, this);
 
         clusters_cloud_publisher_ = node_handle_.advertise<PointCloudMsgT>("/clusters_cloud", 1, true);
-        clusters_box_publisher_ = node_handle_.advertise<jsk_recognition_msgs::BoundingBoxArray>("/clusters_box", 1, true);
-        clusters_msg_publisher_ = node_handle_.advertise<perception_msgs::ObjectArray>("/detected_objects", 1, false);
-        clusters_convex_publisher_ = node_handle_.advertise<jsk_recognition_msgs::PolygonArray>("/clusters_polygon", 1, true);
+        clusters_msg_publisher_ = node_handle_.advertise<perception_msgs::DetectedObjectArray>("/detected_objects", 1, false);
 
         int min_n_pt;
         int max_n_pt;
@@ -54,40 +51,20 @@ namespace lidar_object_detector
         cluster_detector_ = std::make_unique<ClusterDetector>(min_dist, min_size, max_size, min_n_pt, max_n_pt, cluster_tolerance);
     }
 
-    void LidarObjectDetector::send_clusters(const std::vector<Cluster::Ptr>& clusters, const std_msgs::Header& header)
+    void LidarObjectDetector::cloud_callback(const PointCloudT::ConstPtr &msg)
     {
-        ROS_INFO_STREAM("clusters number : " << clusters.size());
+        auto clusters = cluster_detector_->detect(msg);
 
+        std_msgs::Header header = pcl_conversions::fromPCL(msg->header);
         pcl::PointCloud<pcl::PointXYZI> ret;
-        jsk_recognition_msgs::BoundingBoxArray  array;
-        jsk_recognition_msgs::PolygonArray  polygon_array;
-        perception_msgs::ObjectArray object_array;
+        perception_msgs::DetectedObjectArray object_array;
 
         for (int i = 0 ; i < clusters.size(); ++i)
         {
             auto cluster = clusters[i];
-            BoxShapeEstimator::Box cluster_box{};
-
+            perception_msgs::DetectedObject cluster_box;
             if (box_estimator_->estimate(cluster, cluster_box))
             {
-                jsk_recognition_msgs::BoundingBox box;
-
-                box.header = header;
-                box.pose.position.x = cluster_box.x;
-                box.pose.position.y = cluster_box.y;
-                box.pose.position.z = cluster_box.z;
-
-                auto orient = tf::createQuaternionFromYaw(cluster_box.heading);
-                box.pose.orientation.x = orient.x();
-                box.pose.orientation.y = orient.y();
-                box.pose.orientation.z = orient.z();
-                box.pose.orientation.w = orient.w();
-
-                box.dimensions.x = cluster_box.dx;
-                box.dimensions.y = cluster_box.dy;
-                box.dimensions.z = cluster_box.dz;
-                box.label = i;
-
                 geometry_msgs::PolygonStamped polygon;
                 polygon.header = header;
                 PointCloudT convex_hull_points = cluster->get_convex();
@@ -99,20 +76,9 @@ namespace lidar_object_detector
                     p.z = 0;
                     polygon.polygon.points.emplace_back(p);
                 }
-
-                perception_msgs::Object object;
-                object.dimensions = box.dimensions;
-                object.pose = box.pose;
-                object.id = i;
-                object.confidence = 1.0;
-                object.type = perception_msgs::Object::TYPE_CAR;
-                object.motion_state = perception_msgs::Object::MOTION_MOVING;
-                object.track_id = 0;
-                object.convex_hull = polygon;
-
-                polygon_array.labels.emplace_back(i);
-                polygon_array.polygons.emplace_back(polygon);
-                array.boxes.emplace_back(box);
+                cluster_box.id = i;
+                cluster_box.label = "unknown";
+                cluster_box.convex_hull = polygon;
 
                 float color = ((i*49+21)%255);
                 auto  cloud = cluster->cloud;
@@ -121,24 +87,13 @@ namespace lidar_object_detector
                     p.intensity = color;
                     ret.push_back(p);
                 }
+
+                object_array.objects.emplace_back(cluster_box);
             }
         }
 
-        ret.header.frame_id = header.frame_id;
-        ret.header.stamp = pcl_conversions::toPCL(header.stamp);
-        array.header = header;
-        polygon_array.header = header;
+        object_array.header = header;
+        clusters_msg_publisher_.publish(object_array);
         clusters_cloud_publisher_.publish(ret);
-        clusters_box_publisher_.publish(array);
-        clusters_convex_publisher_.publish(polygon_array);
-    }
-
-    void LidarObjectDetector::cloud_callback(const PointCloudT::ConstPtr &msg)
-    {
-        auto clusters = cluster_detector_->detect(msg);
-
-        // TODO: refine cluster
-
-        send_clusters(clusters, pcl_conversions::fromPCL(msg->header));
     }
 }

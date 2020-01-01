@@ -28,7 +28,7 @@
 
         <!-- for map_roi_filter -->
         <param name="range" value="100"/>
-        <param name="extend_dist" value="2.0"/>
+        <param name="extend_dist" value="1.0"/>
         <param name="cell_size" value="0.4"/>
 
     </node>

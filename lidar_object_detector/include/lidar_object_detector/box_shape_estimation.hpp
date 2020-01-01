@@ -12,15 +12,9 @@ namespace lidar_object_detector
 
     public:
 
-        struct Box
-        {
-            double x,y,z,heading;
-            double dx,dy,dz;
-        };
-
         BoxShapeEstimator();
 
-        bool estimate(const Cluster::Ptr& cluster, Box& box);
+        bool estimate(const Cluster::Ptr& cluster, perception_msgs::DetectedObject& box);
 
     };
 }
